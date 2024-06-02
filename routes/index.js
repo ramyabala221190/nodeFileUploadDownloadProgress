@@ -2,6 +2,7 @@ var express = require('express');
 const multer = require('multer');//To enable file upload
 var router = express.Router();
 const fs = require('fs');
+const path=require('path')
 
 const photoUpload = multer({
   storage: multer.diskStorage({
@@ -14,17 +15,29 @@ const photoUpload = multer({
   })
 }).array('uploads');
 
+router.get("/excel", function (req, res) {
+  //downloading a excel
+  const stats = fs.statSync('public/test.xlsx');
+  const fileSizeInBytes = stats["size"]; //get the size of the file
+  console.log(fileSizeInBytes);
+   res.set("Content-Length", fileSizeInBytes);
+   res.set("Content-Disposition", 'attachment;filename="test.xlsx"');
+    //res.send(data);
+  res.sendFile(path.join(__dirname, '../public', 'test.xlsx'))
+
+})
+
 
 router.get("/photos", function (req, res) {
   //downloading a json
   const stats = fs.statSync('public/photos.json');
   const fileSizeInBytes = stats["size"]; //get the size of the file
-  console.log(fileSizeInBytes)
-  fs.readFile("public/photos.json", "utf8", function (err, data) {
-    if (err) throw err;
-    res.set("Content-Length", fileSizeInBytes);
-    res.send(data);
-  })
+  console.log(fileSizeInBytes);
+   res.set("Content-Length", fileSizeInBytes);
+   res.set("Content-Disposition", 'attachment;filename="photos.json"');
+    //res.send(data);
+  res.sendFile(path.join(__dirname, '../public', 'photos.json'))
+
 })
 
 
